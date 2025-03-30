@@ -1,0 +1,325 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+body {
+    background-color: #f4f4f9;
+    color: #333;
+    padding: 20px;
+}
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.logo {
+    width: 100px;
+    height: auto;
+}
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.container {
+    max-width: 1000px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+label {
+    margin-bottom: 5px;
+    display: block;
+    color: #333;
+}
+input[type="text"], input[type="number"], input[type="password"] {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+button {
+    padding: 10px;
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #217dbb;
+}
+.btn-logout {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #2980b9;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+.btn-logout:hover {
+    background-color: #2980b9;
+}
+.inline-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.form-field {
+    flex: 1;
+    margin-right: 10px;
+}
+.form-field:last-child {
+    margin-right: 0;
+}
+.btn-save {
+    width: 100%;
+    margin-top: 20px;
+    background-color: #2980b9;
+}
+.btn-save:hover {
+    background-color: #2980b9;
+}
+.btn-delete {
+    width: 100%;
+    background-color: #2980b9;
+    margin-top: 15px;
+}
+.btn-delete:hover {
+    background-color: #2980b9;
+}
+.delete-form {
+    text-align: center;
+}
+
+.tabs {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 5px 5px 0 0;
+    background-color: #f4f4f9;
+    margin-right: 5px;
+}
+.tab.active {
+    background-color: #fff;
+    border-bottom: none;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.section-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.section-card {
+    flex: 1 1 45%;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.section-card:hover {
+    transform: scale(1.05);
+}
+
+.section-card h5 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #333;
+}
+
+.section-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-leave, .btn-training {
+    padding: 10px;
+    flex: 1;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.btn-leave {
+    background-color: #2980b9;
+    color: white;
+}
+
+.btn-leave:hover {
+    background-color: #2980b9;
+}
+
+.btn-training {
+    background-color: #2980b9;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-training:hover {
+    background-color: #2980b9;
+}
+
+.section-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); 
+    text-align: center;
+}
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 350px;
+    text-align: center;
+    border-radius: 15px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-confirm {
+    padding: 10px 15px;
+    border: none;
+    background-color: #2980b9;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-confirm:hover {
+    background-color: #2980b9;
+}
+
+.btn-cancel {
+    padding: 10px 15px;
+    border: none;
+    background-color: #2980b9;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-cancel:hover {
+    background-color: #2980b9;
+}
+
+.ui-datepicker {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.ui-datepicker-header {
+    background: #2980b9;
+    color: white;
+    padding: 5px;
+    border-radius: 5px 5px 0 0;
+}
+
+.ui-datepicker-title {
+    font-weight: bold;
+}
+
+.ui-datepicker .ui-datepicker-prev, 
+.ui-datepicker .ui-datepicker-next {
+    color: white;
+}
+
+.ui-datepicker table {
+    width: 100%;
+}
+
+.ui-datepicker th {
+    background: #e9ecef;
+    color: #2980b9;
+    padding: 5px;
+}
+
+.ui-datepicker td {
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.ui-datepicker td:hover {
+    background: #2980b9;
+    color: white;
+}
+
+.ui-datepicker td.ui-datepicker-current-day {
+    background: #2980b9;
+    color: white;
+}
+
+#calendar {
+    display: block;
+    margin-top: 20px;
+}
+
+.group-name {
+    font-size: 14px;
+    color: #666;
+}
