@@ -1,0 +1,341 @@
+create database Sportuvni_Sections;
+
+use Sportuvni_Sections;
+
+create table Section(
+  ID int not null auto_increment primary key,
+  Nazva varchar(30) not null,
+  Misceznahodjennya varchar(100) not null,
+  Miscya INT NOT NULL,
+  Vilni_miscya INT NOT NULL
+);
+
+create table Trener(
+    ID int not null auto_increment primary key,
+    ID_Section int not null,
+    foreign key(ID_Section) references Section(ID),
+    ID_Grup int not null,
+    foreign key(ID_Grup) references Grupa(ID),
+    Prizvushche varchar(30) not null,
+    Imya varchar(30) not null,
+    Vik int not null,
+    Nomer_telefony varchar(12) not null
+);
+
+Create table Ychasnuk(
+    ID int not null auto_increment primary key,
+    Prizvushche varchar(30) not null,
+    Imya varchar(30) not null,
+    Vik int not null,
+    Stat ENUM('Чоловік', 'Жінка') NOT NULL,
+    Nomer_telefony varchar(12) not null
+);
+
+create table User(
+    ID_Ychasnuka int not null,
+    foreign key(ID_Ychasnuka) references Ychasnuk(ID),
+    password varchar(100) not null
+);
+
+create table Trenyvannya(
+    ID_Trenera int not null,
+    foreign key(ID_Trenera) references trener(ID),
+    Data date not null,
+    Goduna time not null
+);
+
+CREATE TABLE Grupa (
+  ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  ID_Section INT NOT NULL,
+  FOREIGN KEY (ID_Section) REFERENCES Section(ID),
+  Nazva VARCHAR(20) NOT NULL,
+  Za_vikom ENUM('Молодша', 'Старша') NOT NULL,
+  Za_statyu ENUM('Чоловіча', 'Жіноча', 'Змішана') NOT NULL,
+  Miscya INT NOT NULL,
+  Vilni_miscya INT NOT NULL
+);
+
+create table ychasnuk_section(
+    ID_Ychasnuka int not null,
+    foreign key(ID_Ychasnuka) references Ychasnuk(ID),
+    ID_Section int not null,
+    foreign key(ID_Section) references Section(ID),
+    ID_Grup int,
+    foreign key(ID_Grup) references Grupa(ID)
+);
+
+DELIMITER //
+
+CREATE TRIGGER assign_group BEFORE INSERT ON ychasnuk_section
+FOR EACH ROW
+BEGIN
+    DECLARE group_id INT;
+    DECLARE participant_age INT;
+    DECLARE participant_gender VARCHAR(10);
+
+    SELECT Vik INTO participant_age FROM Ychasnuk WHERE ID = NEW.ID_Ychasnuka;
+
+    SELECT Stat INTO participant_gender FROM Ychasnuk WHERE ID = NEW.ID_Ychasnuka;
+
+    SELECT ID INTO group_id
+    FROM Grupa
+    WHERE ID_Section = NEW.ID_Section
+        AND Za_vikom = CASE
+            WHEN participant_age < 18 THEN 'Молодша'
+            ELSE 'Старша'
+        END
+        AND (Za_statyu = CASE
+            WHEN participant_gender = 'Чоловік' THEN 'Чоловіча'
+            WHEN participant_gender = 'Жінка' THEN 'Жіноча'
+            ELSE 'Змішана'
+        END
+        OR Za_statyu = 'Змішана')
+    LIMIT 1;
+
+    SET NEW.ID_Grup = group_id;
+
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER decrease_vilni_miscya_grupa AFTER INSERT ON ychasnuk_section
+FOR EACH ROW
+BEGIN
+    UPDATE Grupa
+    SET Vilni_miscya = Vilni_miscya - 1
+    WHERE ID = NEW.ID_Grup;
+
+    UPDATE Section
+    SET Vilni_miscya = Vilni_miscya - 1
+    WHERE ID = NEW.ID_Section;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER increase_vilni_miscya_grupa AFTER DELETE ON ychasnuk_section
+FOR EACH ROW
+BEGIN
+    UPDATE Grupa
+    SET Vilni_miscya = Vilni_miscya + 1
+    WHERE ID = OLD.ID_Grup;
+
+    UPDATE Section
+    SET Vilni_miscya = Vilni_miscya + 1
+    WHERE ID = OLD.ID_Section;
+END //
+
+DELIMITER ;
+
+INSERT INTO Trener (ID_Section,ID_Grup,Prizvushche, Imya, Vik, Nomer_telefony) VALUES
+(1, 1, 'Петренко', 'Олексій', 35, '0931234567'),
+(1, 2, 'Коваль', 'Микола', 30, '0953456789'),
+(1, 3, 'Шевченко', 'Іван', 28, '0964567890'),
+(1, 4, 'Іванченко', 'Сергій', 45, '0685678901'),
+
+(2, 5, 'Гнатюк', 'Богдан', 38, '0696789012'),
+(2, 6, 'Зубенко', 'Дмитро', 32, '0927890123'),
+(2, 7, 'Бондаренко', 'Олег', 29, '0978901234'),
+(2, 8, 'Кравченко', 'Юрій', 42, '0939012345'),
+
+(3, 9, 'Мельник', 'Петро', 33, '0670123456'),
+(3, 10, 'Дорошенко', 'Андрій', 27, '0951234567'),
+(3, 11, 'Лисенко', 'Максим', 31, '0962345678'),
+(3, 12, 'Олійник', 'Тарас', 39, '0683456789'),
+
+(4, 13, 'Левченко', 'Ігор', 34, '0694567890'),
+(4, 14, 'Білик', 'Олександр', 37, '0925678901'),
+
+(5, 15, 'Мороз', 'Володимир', 36, '0937890123'),
+(5, 16, 'Гриценко', 'Євген', 31, '0678901234'),
+
+(6, 17, 'Пономаренко', 'Артем', 29, '0959012345'),
+(6, 18, 'Черненко', 'Микита', 41, '0681234567'),
+(6, 19,'Кузьменко', 'Станіслав', 30, '0692345678'),
+(6, 20, 'Ткаченко', 'Леонід', 35, '0923456789'),
+
+(7, 21, 'Василенко', 'Олександр', 33, '0935678901'),
+(7, 22, 'Данилюк', 'Артем', 40, '0676789012'),
+
+(8, 23, 'Петрук', 'Віктор', 29, '0957890123'),
+(8, 24, 'Журавель', 'Денис', 27, '0968901234'),
+
+(9, 25, 'Онопко', 'Юлія', 36, '0689012345'),
+(9, 26, 'Мартинюк', 'Лариса', 43, '0690123456'),
+
+(10, 27, 'Козак', 'Ірина', 29, '0972345678'),
+(10, 28, 'Таран', 'Ольга', 38, '0933456789'),
+
+(11, 29, 'Савченко', 'Марина', 31, '0674567890'),
+(11, 30, 'Романенко', 'Катерина', 34, '0955678901'),
+
+(12, 31, 'Костилєв', 'Олександр', 28, '099345544'),
+(12, 32, 'Триноженко', 'Арсеній', 42, '0950342375'),
+(12, 33, 'Тисленко', 'Даниїл', 37, '0671110911'),
+(12, 34, 'Сухарєв', 'Іван', 45, '0967483043');
+
+INSERT INTO Grupa (ID_Section, Nazva, Za_vikom, Za_statyu, Miscya, Vilni_miscya)
+VALUES
+#Бокс
+(1, 'БМ-01', 1, 1, 26, 26),
+(1, 'БМ-02', 2, 1, 26, 26),
+(1, 'БС-03',1 , 2, 26, 26),
+(1, 'БС-04', 2, 2, 26, 26),
+
+#Баскетбол
+(2, 'БКМ-01', 1, 1, 10, 10),
+(2, 'БКМ-02', 2, 1, 10, 10),
+(2, 'БКС-01', 1, 2, 10, 10),
+(2, 'БКС-02', 2, 2, 10, 10),
+
+#Фубол
+(3, 'ФКМ-01', 1, 1, 22, 22),
+(3, 'ФКМ-02', 2, 1, 22, 22),
+(3, 'ФКС-01', 1, 2, 22, 22),
+(3, 'ФКС-02', 2, 2, 22, 22),
+
+#Текхвандо
+(4, 'ТМ-01', 1, 3, 22, 22),
+(4, 'ТС-04', 2, 3, 22, 22),
+
+#Карате
+(5, 'КМ-01', 1, 3, 20, 20),
+(5, 'КС-04', 2, 3, 20, 20),
+
+#Волейбол
+(6, 'ВКМ-01', 1, 3, 12, 12),
+(6, 'ВКМ-02', 1, 3, 12, 12),
+(6, 'ВКС-01', 2, 3, 12, 12),
+(6, 'ВКС-02', 2, 3, 12, 12),
+
+#Дзюдо
+(7, 'ДМ-01', 1, 3, 18, 18),
+(7,'ДС-04', 2, 3, 18, 18),
+
+#Легка атлетика
+(8, 'ЛМ-01', 1, 3, 20, 20),
+(8, 'ЛС-04', 2, 3, 20, 20),
+
+#Настільний теніс
+(9, 'НМ-01', 1, 3, 16, 16),
+(9, 'НС-04', 2, 3, 16, 16),
+
+#Великий теніс
+(10, 'ВТМ-01', 1, 3, 10, 10),
+(10, 'ВТС-04', 2, 3, 10, 10),
+
+#Фехтування
+(11, 'ФМ-01', 1, 3, 15, 15),
+(11, 'ФС-04', 2, 3, 15, 15),
+
+#Кіберспорт
+(12, 'КСМ-01', 1, 1, 10, 10),
+(12, 'КСМ-02', 2, 1, 10, 10),
+(12, 'КСС-03', 1, 2, 10, 10),
+(12, 'КСС-04', 2, 2, 10, 10);
+
+INSERT INTO Trenyvannya (ID_Trenera, Data, Goduna)
+SELECT trener_id,
+       DATE_ADD('2024-11-01', INTERVAL FLOOR(RAND() * 31) DAY) AS Data,
+       ADDTIME('15:00', SEC_TO_TIME(FLOOR(RAND() * 4) * 5400)) AS Chas_trenyvannya
+FROM (
+    SELECT ID AS trener_id FROM trener
+) AS T,
+LATERAL (
+    SELECT 1 AS n UNION ALL
+    SELECT 2 UNION ALL
+    SELECT 3 UNION ALL
+    SELECT 4 UNION ALL
+    SELECT 5 UNION ALL
+    SELECT 6 UNION ALL
+    SELECT 7 UNION ALL
+    SELECT 8
+) AS N;
+
+SELECT
+  Grupa.Nazva AS Група,
+  Section.Nazva AS Секція,
+  Grupa.Vilni_miscya AS Вільні_місця
+FROM Grupa
+JOIN Section ON Grupa.ID_Section = Section.ID;
+
+SELECT
+    concat(Trener.Prizvushche, ' ', Trener.Imya) AS Тренер,
+    Grupa.Nazva AS Група,
+    Trenyvannya.Data AS Дата,
+    Trenyvannya.Goduna AS Час
+FROM Trenyvannya
+JOIN Trener ON Trenyvannya.ID_Trenera = Trener.ID
+JOIN Section ON Trener.ID_Section = Section.ID
+JOIN Grupa ON Trener.ID_Grup = Grupa.ID
+WHERE Section.ID = ?;
+
+SELECT concat(Trener.Prizvushche, ' ',Trener.Imya ) as Тренер, Trener.Vik, Trener.Nomer_telefony,
+       Section.Nazva AS Секція, Grupa.Nazva AS Група
+FROM Trener
+JOIN Section ON Trener.ID_Section = Section.ID
+JOIN Grupa ON Trener.ID_Grup = Grupa.ID;
+
+SELECT Data, Goduna
+FROM Trenyvannya
+WHERE ID_Trenera = 1;
+
+SELECT Section.Nazva AS Секція, Grupa.Nazva AS Група, COUNT(ychasnuk_section.ID_Ychasnuka) AS Кількість_учасників
+FROM Section
+JOIN Grupa ON Section.ID = Grupa.ID_Section
+LEFT JOIN ychasnuk_section ON Grupa.ID = ychasnuk_section.ID_Grup
+GROUP BY Section.Nazva, Grupa.Nazva;
+
+SELECT concat(Ychasnuk.Prizvushche, ' ', Ychasnuk.Imya) as Учасник , Ychasnuk.Vik,
+       Section.Nazva AS Section_Nazva, Grupa.Nazva AS Grupa_Nazva
+FROM Ychasnuk
+JOIN ychasnuk_section ON Ychasnuk.ID = ychasnuk_section.ID_Ychasnuka
+JOIN Section ON ychasnuk_section.ID_Section = Section.ID
+LEFT JOIN Grupa ON ychasnuk_section.ID_Grup = Grupa.ID;
+
+SELECT Ychasnuk.Prizvushche, Ychasnuk.Imya, Ychasnuk.Vik, Ychasnuk.Stat
+FROM ychasnuk_section
+JOIN Ychasnuk ON ychasnuk_section.ID_Ychasnuka = Ychasnuk.ID
+WHERE ychasnuk_section.ID_Section = ?;
+
+SELECT Ychasnuk.Prizvushche, Ychasnuk.Imya, Ychasnuk.Vik, Ychasnuk.Stat
+FROM ychasnuk_section
+JOIN Ychasnuk ON ychasnuk_section.ID_Ychasnuka = Ychasnuk.ID
+WHERE ychasnuk_section.ID_Grup = ?;
+
+SELECT Grupa.Nazva, Grupa.Za_vikom, Grupa.Za_statyu, Grupa.Miscya, Grupa.Vilni_miscya
+FROM Grupa
+WHERE Grupa.ID_Section = 1;
+
+SELECT *
+FROM Ychasnuk
+WHERE (Imya, Prizvushche, Vik, Stat, Nomer_telefony) NOT IN (
+    SELECT Imya, Prizvushche, Vik, Stat, Nomer_telefony
+    FROM Ychasnuk
+    GROUP BY Imya, Prizvushche, Vik, Stat, Nomer_telefony
+    HAVING COUNT(*) = 1
+);
+
+SELECT *
+FROM Ychasnuk
+WHERE (Imya, Prizvushche, Vik, Stat, Nomer_telefony) IN (
+    SELECT Imya, Prizvushche, Vik, Stat, Nomer_telefony
+    FROM Ychasnuk
+    GROUP BY Imya, Prizvushche, Vik, Stat, Nomer_telefony
+    HAVING COUNT(*) = 1
+);
+
+WITH DuplicateRecords AS (
+    SELECT Imya, Prizvushche, Vik, Stat, Nomer_telefony
+    FROM Ychasnuk
+    GROUP BY Imya, Prizvushche, Vik, Stat, Nomer_telefony
+    HAVING COUNT(*) > 1
+)
+DELETE FROM Ychasnuk
+WHERE (Imya, Prizvushche, Vik, Stat, Nomer_telefony) IN (
+    SELECT Imya, Prizvushche, Vik, Stat, Nomer_telefony
+    FROM DuplicateRecords
+);
