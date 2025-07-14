@@ -18,7 +18,9 @@ After that, you need to import the database into mysql (if you don't have mysql,
 ```
 mysql -u user -p SportSectionsDB < ./sections.sql
 ```
-in order to host the site you will need something like openserver panel, or some extension with vs code (personally I used osp)
+In order to host the site you will need something like openserver panel, or some extension with vs code (personally I used osp)
+
+## Screenshots of program works
 - Home page
 <img width="800" height="600" alt="image" src="https://github.com/user-attachments/assets/ae7f998b-c3ca-492a-86f2-dc7193815c87" />
 
